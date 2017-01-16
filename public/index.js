@@ -306,8 +306,8 @@ function Compute_Debit_Credit()
 				price = rentals[j].price;
 				var commission = rentals[j].price * 0.70;
 				var insurance = commission / 2;
-				var roadAssistance = numberOfDay * 1;
-				var drivy = commission - insurance - roadAssistance;	
+				var roadsideAssistance = numberOfDay * 1;
+				var drivy = commission - insurance - roadsideAssistance;	
 			
 			for ( var k = 0 ; k < actors[i].payment.length; k++)
 			{
@@ -330,7 +330,7 @@ function Compute_Debit_Credit()
 					break;
 				
 					case 'assistance' :
-					actors[i].payment[k].amount = roadAssistance;
+					actors[i].payment[k].amount = roadsideAssistance;
 					console.log('Amount for the assistance is : ' + actors[i].payment[k].amount);
 					break;
 				
