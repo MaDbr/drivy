@@ -191,19 +191,6 @@ function getDays (beginDate, returnDate){
 	var end = convertDate(returnDate).getTime();
 	}
 	
-	
-/*function getPrice()
-{
-	for (var i=0;i<cars.length;i++)
-	{
-		var car_km= [];
-		var car_day=[];
-		car_km[i]= cars[i].pricePerKm;
-		car_day[i]=cars[i].pricePerDay;
-	}
-}
-*/  
-
 
 // Exercice 1 : Write code that generates the price for each driver
 function getPrice() {
@@ -301,31 +288,137 @@ function Deductible_Option()
 // - Compute the debit for the driver
 // - Compute the credit of the car owner, insurance, assistance and drivy.
 
-function Compute_Debit_Credit(){
-	
-	for (i = 0; i< actors.length; i++)
+function Compute_Debit_Credit()
+{
+	for ( var i = 0 ; i < actors.length ; i++)
 	{
-		if(actors[i].who == "driver"){
-			actors[i].amount = rentals[i].price; // prix de la location
+	var price = 0;
+	var commission = 0;
+	var insurance = 0;
+	var assistance = 0 ;
+	var reduction = true ; 
+	var numberOfDay = getDate(actors[i].rentalId);
+	
+		for ( var j = 0 ; j < rentals.length ; j++)
+		{
+			if ( actors[i].rentalId == rentals[j].id ) 
+			{
+				price = rentals[j].price;
+				var commission = rentals[j].price * 0.70;
+				var insurance = commission / 2;
+				var roadAssistance = numberOfDay * 1;
+				var drivy = commission - insurance - roadAssistance;	
+			
+			for ( var k = 0 ; k < actors[i].payment.length; k++)
+			{
+				switch(actors[i].payment[k].who)
+			
+				{
+					case 'driver' : 
+					actors[i].payment[k].amount = price;
+					console.log('Amount for the driver is : ' + actors[i].payment[k].amount);
+					break;
+				
+					case 'owner' :
+					actors[i].payment[k].amount = price-commission;
+					console.log('Amount for the owner is : ' + actors[i].payment[k].amount);
+					break;
+				
+					case 'insurance' :
+					actors[i].payment[k].amount = insurance;
+					console.log('Amount for the insurance is : ' + actors[i].payment[k].amount);
+					break;
+				
+					case 'assistance' :
+					actors[i].payment[k].amount = roadAssistance;
+					console.log('Amount for the assistance is : ' + actors[i].payment[k].amount);
+					break;
+				
+					case 'drivy' :
+					if(rentals[i].options.reduction == true)
+					{
+						var option_deductible = 4 * numberOfDay;
+						actors[i].payment[k].amount = drivy + option_deductible;
+						console.log('Amount for drivy is : ' + actors[i].payment[k].amount);
+						break;
+					}
+	
+					else {
+						var option_deductible=0;
+						actors[i].payment[k].amount=drivy + option_deductible;
+						console.log('Drivy Amount : ' + actors[i].payment[k].amount);
+					break;
+					}
+					
+				
+				}			
+			}			
+			}
 		}
 		
-		else if (actors[i].who = "owner"){
-			actors[i].amount = rentals[i].price - rentals[i].price * 0.3; // prix de la location - la commission
-		}
-		
-		else if (actors[i].who = "insurance"){ // 50% de la commission
-			actors[i].amount = rentals[i].price * 0.3 * 0.5;
-		}
-		
-		else if (actors[i].who == "assistance"){
-			actors[i].amount = rentNumberDays * 1 // 1€ par jour
-		}
-		
-		else if (actors[i].who == "drivy"){
-			actors[i].amount = rentals[i].price -  rentals[i].price * 0.3 - rentals[i].price * 0.3 * 0.5 - rentNumberDays * 1; 
-		}
 	}
+
 }
 
 // Exercice 6 : Compute the debit for the driver and the credit of the car owner, insurance, assistance and drivy with the rental modification.
+
+
+function Modification(){
+	
+	for(var i=0; i < rentalModifications.length; i++){
+			
+		for(var j=0; j < rentals.length; j++){
+				
+				if(rentalModifications[i].rentalId == rentals[j].id){
+					
+					if( typeof rentalModifications[i].returnDate != "undefined"){
+					rentals[j].returnDate = rentalModifications[i].returnDate;
+					}
+
+					if(typeof rentalModifications[i].pickupDate != "undefined"){
+					rentals[j].pickupDate = rentalModifications[i].pickupDate;
+					}
+			
+					if(typeof rentalModifications[i].distance != "undefined"){
+					rentals[j].distance = rentalModifications[i].distance;
+					}
+					
+					if(typeof rentalModifications[i].options!="undefined"){
+					rentals[j].options.deductibleReduction = rentalModifications[i].options.deductibleReduction;
+					}
+					
+					if(typeof rentalModifications[i].carId!="undefined"){
+					rentals[j].carId = rentalModifications[i].carId;
+					}
+				}
+		}
+
+	}
+}
+
+function Modification_Payment()
+{
+	getPrice();
+	DecreasingPrice();
+	Deductible_Option();
+	Compute_Debit_Credit();
+	
+}
+
+
+	getPrice();
+	DecreasingPrice();
+	Compute_Commission();
+	Deductible_Option();
+	Compute_Debit_Credit();
+	Modification();
+	Modification_Payment();
+	
+	console.log(cars);
+	console.log(rentals);
+	console.log(actors);
+	console.log(rentalModifications);
+
+
+
 
